@@ -2,6 +2,7 @@
 import { type CollectionEntry, getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import { formatDate } from "../../lib/utils";
+import TwikooComments from "../../components/TwikooComments.astro";
 
 export async function getStaticPaths() {
   const posts = await getCollection("posts");
@@ -31,5 +32,11 @@ const { Content } = await post.render();
     <article>
       <Content />
     </article>
+    
+    <!-- 评论区 -->
+    <TwikooComments 
+      envId="https://twikoo.284628.xyz/.netlify/functions/twikoo" 
+      path={`/posts/${post.slug}`}
+    />
   </main>
 </Layout>

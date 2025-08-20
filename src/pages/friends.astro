@@ -1,0 +1,216 @@
+---
+import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
+import Layout from "../layouts/Layout.astro";
+
+// 友情链接数据
+const friends = [
+  {
+    name: "伍柒柒",
+    url: "https://blog.efu.me",
+    description: "分享技术与科技生活",
+    avatar: "https://i.284628.xyz/o4xNe9pg.webp"
+  },
+  {
+    name: "张洪Heo",
+    url: "https://blog.zhheo.com",
+    description: "分享生活和思考",
+    avatar: "https://i.284628.xyz/vzOAoV4Q.webp"
+  },
+  {
+    name: "周润发",
+    url: "https://blog.zrf.me",
+    description: "收录开源，好用的互联网项目",
+    avatar: "https://i.284628.xyz/yuItmNzJ.webp"
+  },
+  {
+    name: "bbb-lsy07",
+    url: "https://blog.6uu.us",
+    description: "科技激荡人文，洞见智慧本真。",
+    avatar: "https://i.284628.xyz/vHKPds1s.webp"
+  },
+  {
+    name: "AirTouch's Blog",
+    url: "https://xsl.im",
+    description: "岩间琉璃云间月",
+    avatar: "https://i.284628.xyz/s5HPTTLi.webp"
+  },
+  {
+    name: "自由的博客",
+    url: "https://blog.free-network.top",
+    description: "自由の博客，一名初中生的博客，热爱生活，热爱技术",
+    avatar: "https://i.284628.xyz/YsO5mJGx.webp"
+  },
+  {
+    name: "小改学习志",
+    url: "https://www.haoyu233.com",
+    description: "孩儿立志出乡关，学不成名誓不还。",
+    avatar: "https://i.284628.xyz/ikcCDYWM.webp"
+  },
+  {
+    name: "清羽飞扬",
+    url: "https://blog.liushen.fun",
+    description: "柳影曳曳，清酒孤灯，扬笔撒墨，心境如霜",
+    avatar: "https://i.284628.xyz/x7Y0UR1s.webp"
+  },
+  {
+    name: "Li's Blog",
+    url: "https://blog.kokowo.cn",
+    description: "写下最美的文章！！",
+    avatar: "https://i.284628.xyz/kNqQ0QHN.webp"
+  },
+  {
+    name: "彬红茶日记",
+    url: "https://note.redcha.cn",
+    description: "我的个人笔记📒",
+    avatar: "https://i.284628.xyz/oO3IQ8mO.webp"
+  },
+  {
+    name: "Wcowin's Blog",
+    url: "https://wcowin.work",
+    description: "循此苦旅，以达星辰",
+    avatar: "https://i.284628.xyz/YQKVY713.webp"
+  },
+  {
+    name: "June's Blog",
+    url: "https://blog.june-pj.cn",
+    description: "遇事不决，可问春风",
+    avatar: "https://i.284628.xyz/aX173Lht.webp"
+  },
+  {
+    name: "东方月初",
+    url: "https://blog.biuxin.com",
+    description: "分享有趣但又无聊的东西。",
+    avatar: "https://i.284628.xyz/zru5QN82.webp"
+  },
+  {
+    name: "r1a dev",
+    url: "https://blog.oneall.eu.org",
+    description: "r1a的开发记录/博客",
+    avatar: "https://i.284628.xyz/wwiIprXe.webp"
+  },
+  {
+    name: "Echo 的小窝",
+    url: "https://www.liveout.cn",
+    description: "漂泊于互联网中的小窝",
+    avatar: "https://i.284628.xyz/j4jDjbHa.webp"
+  },
+  {
+    name: "青序栈",
+    url: "https://qxzhan.cn",
+    description: "青序成栈·向简而生",
+    avatar: "https://i.284628.xyz/hknyEy5Z.webp"
+  },
+  {
+    name: "Mo的记事簿",
+    url: "https://blog.xiowo.net",
+    description: "万年鸽王，哈哈OvO",
+    avatar: "https://i.284628.xyz/gut8l5qq.webp"
+  },
+  {
+    name: "Mete0r’s Blog | 壹人小站",
+    url: "https://www.xscnet.cn",
+    description: "Trust the process.",
+    avatar: "https://i.284628.xyz/ibbrPo5U.webp"
+  },
+  {
+    name: "Yeppioo",
+    url: "https://blog.yeppioo.vip",
+    description: "梦想成为庄稼地里的读书人.....",
+    avatar: "https://i.284628.xyz/7tffW1Ad.webp"
+  },
+  {
+    name: "我的技术成长笔记",
+    url: "https://blog.longdahuasheng.top",
+    description: "零基础入门到进阶实战，记录每一步成长的思考",
+    avatar: "https://i.284628.xyz/VoJIfHY3.webp"
+  },
+  {
+    name: "敬新",
+    url: "https://blog.jxin.me",
+    description: "风吹火长明，雾散梦易醒！",
+    avatar: "https://i.284628.xyz/9t0ccSzR.webp"
+  },
+  {
+    name: "多星宇博客",
+    url: "http://www.0731119.xyz",
+    description: "生命不息 折腾不止",
+    avatar: "https://i.284628.xyz/WP2bMRWs.webp"
+  },
+  {
+    name: "星辰の笔记",
+    url: "https://blog.strarry.top",
+    description: "Code | Think | Share | Repeat",
+    avatar: "https://i.284628.xyz/IBLztGEE.webp"
+  },
+  {
+    name: "青萍叙事",
+    url: "https://blog.lusyoe.com",
+    description: "一个懂技术的产品汪🐶",
+    avatar: "https://i.284628.xyz/WKyOpj9k.webp"
+  },
+  {
+    name: "THW’s Blog",
+    url: "https://thw.lol",
+    description: "Live a good life meet slowly",
+    avatar: "https://i.284628.xyz/zETGMDmU.webp"
+  }
+];
+---
+
+<Layout title={`友情链接 - ${SITE_TITLE}`} description={SITE_DESCRIPTION}>
+  <main>
+    <h1 class="mb-5 text-xl font-medium">友情链接</h1>
+    
+    <div class="mb-6">
+      <p class="text-zinc-500 dark:text-zinc-400 leading-relaxed">
+        这里是我的朋友们的站点，每一个都值得一看。
+      </p>
+    </div>
+
+    <div class="space-y-3">
+      {friends.map((friend) => (
+        <a 
+          href={friend.url} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          class="group flex items-center gap-3 p-3 rounded-lg border transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-800"
+        >
+          <img 
+            src={friend.avatar} 
+            alt={friend.name}
+            class="size-8 rounded-full border dark:border-zinc-700"
+          />
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between gap-2">
+              <h3 class="font-medium text-zinc-900 dark:text-zinc-100 group-hover:text-blue-500 dark:group-hover:text-blue-400">
+                {friend.name}
+              </h3>
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                viewBox="0 0 16 16" 
+                fill="currentColor" 
+                class="size-4 text-zinc-400 group-hover:text-zinc-600 dark:group-hover:text-zinc-300"
+              >
+                <path fill-rule="evenodd" d="M4.22 11.78a.75.75 0 0 1 0-1.06L9.44 5.5H5.75a.75.75 0 0 1 0-1.5h5.5a.75.75 0 0 1 .75.75v5.5a.75.75 0 0 1-1.5 0V6.56l-5.22 5.22a.75.75 0 0 1-1.06 0Z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <p class="text-sm text-zinc-500 dark:text-zinc-400 truncate">
+              {friend.description}
+            </p>
+          </div>
+        </a>
+      ))}
+    </div>
+
+    <div class="mt-8 p-4 rounded-lg border bg-zinc-50/50 dark:border-zinc-700 dark:bg-zinc-800/50">
+      <h2 class="font-medium text-zinc-900 dark:text-zinc-100 mb-2">交换友链</h2>
+      <p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">
+        如果你也有博客，欢迎与我交换友情链接。可以通过 
+        <a href="mailto:hello@nicholasly.com" class="text-blue-500 underline hover:text-blue-600 dark:hover:text-blue-400">
+          邮件
+        </a> 
+        联系我。
+      </p>
+    </div>
+  </main>
+</Layout>

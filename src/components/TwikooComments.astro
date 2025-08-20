@@ -1,0 +1,140 @@
+---
+interface Props {
+  envId: string;
+  path?: string;
+}
+
+const { envId, path } = Astro.props;
+---
+
+<div class="mt-8">
+  <h2 class="mb-4 text-lg font-medium text-zinc-900 dark:text-zinc-100">评论</h2>
+  <div 
+    id="tcomment" 
+    class="twikoo-container rounded-lg border p-4 dark:border-zinc-700"
+  ></div>
+</div>
+
+<script 
+  src="https://cdn.jsdelivr.net/npm/twikoo@1.6.32/dist/twikoo.all.min.js"
+  is:inline
+></script>
+
+<script define:vars={{ envId, path }}>
+  const initTwikoo = () => {
+    if (typeof twikoo !== 'undefined') {
+      twikoo.init({
+        envId: envId,
+        el: '#tcomment',
+        path: path || location.pathname,
+        lang: 'zh-CN'
+      });
+    }
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initTwikoo);
+  } else {
+    initTwikoo();
+  }
+
+  document.addEventListener('astro:after-swap', initTwikoo);
+</script>
+
+<style is:global>
+  .twikoo-container {
+    font-family: inherit;
+  }
+  
+  .dark .twikoo-container {
+    background-color: transparent;
+  }
+  
+  .dark .tk-content textarea,
+  .dark .tk-input input {
+    background-color: rgb(39 39 42) !important;
+    border-color: rgb(63 63 70) !important;
+    color: rgb(228 228 231) !important;
+  }
+  
+  .dark .tk-content textarea:focus,
+  .dark .tk-input input:focus {
+    border-color: rgb(96 165 250) !important;
+  }
+  
+  .dark .tk-submit {
+    background-color: rgb(24 24 27) !important;
+    border-color: rgb(63 63 70) !important;
+    color: rgb(228 228 231) !important;
+  }
+  
+  .dark .tk-submit:hover {
+    background-color: rgb(39 39 42) !important;
+  }
+  
+  .dark .tk-comment,
+  .dark .tk-replies-wrap {
+    background-color: transparent !important;
+    border-color: rgb(63 63 70) !important;
+  }
+  
+  .dark .tk-comment .tk-main {
+    color: rgb(228 228 231) !important;
+  }
+  
+  .dark .tk-comment .tk-meta span {
+    color: rgb(161 161 170) !important;
+  }
+  
+  .dark .tk-comment a {
+    color: rgb(96 165 250) !important;
+  }
+  
+  .dark .tk-comment a:hover {
+    color: rgb(147 197 253) !important;
+  }
+  
+  .dark .tk-owo-container {
+    background-color: rgb(39 39 42) !important;
+    border-color: rgb(63 63 70) !important;
+  }
+  
+  .dark .tk-tag,
+  .dark .tk-extras {
+    color: rgb(161 161 170) !important;
+  }
+  
+  .tk-comment,
+  .tk-content,
+  .tk-input {
+    font-family: 'Geist', system-ui, sans-serif !important;
+  }
+  
+  .tk-content textarea,
+  .tk-input input,
+  .tk-submit,
+  .tk-comment,
+  .tk-owo-container {
+    border-radius: 0.5rem !important;
+  }
+  
+  .tk-comment {
+    margin-bottom: 1rem !important;
+  }
+  
+  .dark .tk-loading {
+    color: rgb(161 161 170) !important;
+  }
+  
+  .tk-avatar {
+    display: none !important;
+  }
+  
+  .tk-content {
+    margin-left: 0 !important;
+  }
+  
+  .tk-main {
+    margin-left: 0 !important;
+  }
+</style>
