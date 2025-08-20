@@ -11,22 +11,28 @@ date: "Aug 20 2025"
 ```
 ---
 interface Props {
-  envId: string;
-  path?: string;
+  envId: string
+  path?: string
 }
 
-const { envId, path } = Astro.props;
+const { envId, path } = Astro.props
 ---
 
 <div class="mt-8">
-  <h2 class="mb-4 text-lg font-medium text-zinc-900 dark:text-zinc-100">评论</h2>
-  <div 
-    id="tcomment" 
+  <h2 class="mb-4 text-lg font-medium text-zinc-900 dark:text-zinc-100">
+    评论
+  </h2>
+  <div
+    id="tcomment"
     class="twikoo-container rounded-lg border p-4 dark:border-zinc-700"
-  ></div>
+  >
+    <p class="text-center text-sm text-zinc-500 dark:text-zinc-400">
+      加载评论中...
+    </p>
+  </div>
 </div>
 
-<script 
+<script
   src="https://cdn.jsdelivr.net/npm/twikoo@1.6.32/dist/twikoo.all.min.js"
   is:inline
 ></script>
@@ -38,89 +44,103 @@ const { envId, path } = Astro.props;
         envId: envId,
         el: '#tcomment',
         path: path || location.pathname,
-        lang: 'zh-CN'
-      });
+        lang: 'zh-CN',
+      })
     }
-  };
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initTwikoo);
-  } else {
-    initTwikoo();
   }
 
-  document.addEventListener('astro:after-swap', initTwikoo);
+  const observer = new IntersectionObserver(
+    (entries) => {
+      if (entries[0].isIntersecting) {
+        initTwikoo()
+        observer.disconnect()
+      }
+    },
+    { threshold: 0.1 }
+  )
+
+  const target = document.getElementById('tcomment')
+  if (target) {
+    observer.observe(target)
+  }
+
+  document.addEventListener('astro:after-swap', () => {
+    const el = document.getElementById('tcomment')
+    if (el) {
+      observer.observe(el)
+    }
+  })
 </script>
 
 <style is:global>
   .twikoo-container {
     font-family: inherit;
   }
-  
+
   .dark .twikoo-container {
     background-color: transparent;
   }
-  
+
   .dark .tk-content textarea,
   .dark .tk-input input {
     background-color: rgb(39 39 42) !important;
     border-color: rgb(63 63 70) !important;
     color: rgb(228 228 231) !important;
   }
-  
+
   .dark .tk-content textarea:focus,
   .dark .tk-input input:focus {
     border-color: rgb(96 165 250) !important;
   }
-  
+
   .dark .tk-submit {
     background-color: rgb(24 24 27) !important;
     border-color: rgb(63 63 70) !important;
     color: rgb(228 228 231) !important;
   }
-  
+
   .dark .tk-submit:hover {
     background-color: rgb(39 39 42) !important;
   }
-  
+
   .dark .tk-comment,
   .dark .tk-replies-wrap {
     background-color: transparent !important;
     border-color: rgb(63 63 70) !important;
   }
-  
+
   .dark .tk-comment .tk-main {
     color: rgb(228 228 231) !important;
   }
-  
+
   .dark .tk-comment .tk-meta span {
     color: rgb(161 161 170) !important;
   }
-  
+
   .dark .tk-comment a {
     color: rgb(96 165 250) !important;
   }
-  
+
   .dark .tk-comment a:hover {
     color: rgb(147 197 253) !important;
   }
-  
+
   .dark .tk-owo-container {
     background-color: rgb(39 39 42) !important;
     border-color: rgb(63 63 70) !important;
   }
-  
+
   .dark .tk-tag,
   .dark .tk-extras {
     color: rgb(161 161 170) !important;
   }
-  
+
   .tk-comment,
   .tk-content,
   .tk-input {
     font-family: 'Geist', system-ui, sans-serif !important;
   }
-  
+
   .tk-content textarea,
   .tk-input input,
   .tk-submit,
@@ -128,23 +148,23 @@ const { envId, path } = Astro.props;
   .tk-owo-container {
     border-radius: 0.5rem !important;
   }
-  
+
   .tk-comment {
     margin-bottom: 1rem !important;
   }
-  
+
   .dark .tk-loading {
     color: rgb(161 161 170) !important;
   }
-  
+
   .tk-avatar {
     display: none !important;
   }
-  
+
   .tk-content {
     margin-left: 0 !important;
   }
-  
+
   .tk-main {
     margin-left: 0 !important;
   }
@@ -167,8 +187,8 @@ export async function getStaticPaths() {
     props: post,
   }));
 }
-type Props = CollectionEntry<"posts">;
 
+type Props = CollectionEntry<"posts">;
 const post = Astro.props;
 const { Content } = await post.render();
 ---
@@ -185,15 +205,17 @@ const { Content } = await post.render();
     <p class="mb-1 font-medium text-zinc-500">
       {formatDate(post.data.date)}
     </p>
-    <article>
+
+    <article class="prose dark:prose-invert">
       <Content />
     </article>
-    
-    <!-- 评论区 -->
-    <TwikooComments 
-      envId="your-twikoo-env-id" 
-      path={`/posts/${post.slug}`}
-    />
+
+    <div class="mt-10">
+      <TwikooComments 
+        envId="https://twikoo.284628.xyz/.netlify/functions/twikoo"
+        path={`/posts/${post.slug}`}
+      />
+    </div>
   </main>
 </Layout>
 ```

@@ -11,8 +11,8 @@ export async function getStaticPaths() {
     props: post,
   }));
 }
-type Props = CollectionEntry<"posts">;
 
+type Props = CollectionEntry<"posts">;
 const post = Astro.props;
 const { Content } = await post.render();
 ---
@@ -29,14 +29,16 @@ const { Content } = await post.render();
     <p class="mb-1 font-medium text-zinc-500">
       {formatDate(post.data.date)}
     </p>
-    <article>
+
+    <article class="prose dark:prose-invert">
       <Content />
     </article>
-    
-    <!-- 评论区 -->
-    <TwikooComments 
-      envId="https://twikoo.284628.xyz/.netlify/functions/twikoo" 
-      path={`/posts/${post.slug}`}
-    />
+
+    <div class="mt-10">
+      <TwikooComments 
+        envId="https://twikoo.284628.xyz/.netlify/functions/twikoo"
+        path={`/posts/${post.slug}`}
+      />
+    </div>
   </main>
 </Layout>
