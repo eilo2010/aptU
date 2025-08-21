@@ -1,27 +1,22 @@
 ---
 interface Props {
-  envId: string
-  path?: string
+  envId: string;
+  path?: string;
 }
 
-const { envId, path } = Astro.props
+const { envId, path } = Astro.props;
 ---
 
 <div class="mt-8">
-  <h2 class="mb-4 text-lg font-medium text-zinc-900 dark:text-zinc-100">
-    评论
-  </h2>
-  <div
-    id="tcomment"
-    class="twikoo-container rounded-lg border p-4 dark:border-zinc-700"
-  >
-    <p class="text-center text-sm text-zinc-500 dark:text-zinc-400">
-      加载评论中...
-    </p>
-  </div>
+  <h2 class="mb-4 text-lg font-medium text-zinc-900 dark:text-zinc-100">评论</h2>
+  <div id="tcomment-loading" class="hidden"></div>
+  <div 
+    id="tcomment" 
+    class="twikoo-container rounded-lg border p-4 dark:border-zinc-700 hidden opacity-0 transition-opacity duration-300"
+  ></div>
 </div>
 
-<script
+<script 
   src="https://cdn.jsdelivr.net/npm/twikoo@1.6.32/dist/twikoo.all.min.js"
   is:inline
 ></script>
@@ -34,34 +29,40 @@ const { envId, path } = Astro.props
         el: '#tcomment',
         path: path || location.pathname,
         lang: 'zh-CN',
-      })
+        onCommentLoaded: () => {
+          const comment = document.getElementById('tcomment');
+          const loading = document.getElementById('tcomment-loading');
+          loading.classList.add('hidden');
+          comment.classList.remove('hidden');
+          requestAnimationFrame(() => {
+            comment.classList.add('opacity-100');
+          });
+        }
+      });
     }
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initTwikoo);
+  } else {
+    initTwikoo();
   }
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      if (entries[0].isIntersecting) {
-        initTwikoo()
-        observer.disconnect()
-      }
-    },
-    { threshold: 0.1 }
-  )
-
-  const target = document.getElementById('tcomment')
-  if (target) {
-    observer.observe(target)
-  }
-
-  document.addEventListener('astro:after-swap', () => {
-    const el = document.getElementById('tcomment')
-    if (el) {
-      observer.observe(el)
-    }
-  })
+  document.addEventListener('astro:after-swap', initTwikoo);
 </script>
 
 <style is:global>
+  .twikoo-container img {
+    max-width: 100%;
+    height: auto;
+    display: inline-block;
+  }
+
+  :not(.twikoo-container) img {
+    max-width: none !important;
+    height: auto !important;
+  }
+
   .twikoo-container {
     font-family: inherit;
   }
@@ -146,15 +147,11 @@ const { envId, path } = Astro.props
     color: rgb(161 161 170) !important;
   }
 
-  .tk-avatar {
-    display: none !important;
+  .twikoo .tk-avatar {
+    @apply w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full overflow-hidden;
   }
 
-  .tk-content {
-    margin-left: 0 !important;
-  }
-
-  .tk-main {
-    margin-left: 0 !important;
+  .twikoo .tk-avatar img {
+    @apply w-full h-full object-cover block;
   }
 </style>

@@ -11,28 +11,23 @@ date: "Aug 20 2025"
 ```
 ---
 interface Props {
-  envId: string
-  path?: string
+  envId: string;
+  path?: string;
 }
 
-const { envId, path } = Astro.props
+const { envId, path } = Astro.props;
 ---
 
 <div class="mt-8">
-  <h2 class="mb-4 text-lg font-medium text-zinc-900 dark:text-zinc-100">
-    评论
-  </h2>
-  <div
-    id="tcomment"
-    class="twikoo-container rounded-lg border p-4 dark:border-zinc-700"
-  >
-    <p class="text-center text-sm text-zinc-500 dark:text-zinc-400">
-      加载评论中...
-    </p>
-  </div>
+  <h2 class="mb-4 text-lg font-medium text-zinc-900 dark:text-zinc-100">评论</h2>
+  <div id="tcomment-loading" class="hidden"></div>
+  <div 
+    id="tcomment" 
+    class="twikoo-container rounded-lg border p-4 dark:border-zinc-700 hidden opacity-0 transition-opacity duration-300"
+  ></div>
 </div>
 
-<script
+<script 
   src="https://cdn.jsdelivr.net/npm/twikoo@1.6.32/dist/twikoo.all.min.js"
   is:inline
 ></script>
@@ -45,34 +40,40 @@ const { envId, path } = Astro.props
         el: '#tcomment',
         path: path || location.pathname,
         lang: 'zh-CN',
-      })
+        onCommentLoaded: () => {
+          const comment = document.getElementById('tcomment');
+          const loading = document.getElementById('tcomment-loading');
+          loading.classList.add('hidden');
+          comment.classList.remove('hidden');
+          requestAnimationFrame(() => {
+            comment.classList.add('opacity-100');
+          });
+        }
+      });
     }
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initTwikoo);
+  } else {
+    initTwikoo();
   }
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      if (entries[0].isIntersecting) {
-        initTwikoo()
-        observer.disconnect()
-      }
-    },
-    { threshold: 0.1 }
-  )
-
-  const target = document.getElementById('tcomment')
-  if (target) {
-    observer.observe(target)
-  }
-
-  document.addEventListener('astro:after-swap', () => {
-    const el = document.getElementById('tcomment')
-    if (el) {
-      observer.observe(el)
-    }
-  })
+  document.addEventListener('astro:after-swap', initTwikoo);
 </script>
 
 <style is:global>
+  .twikoo-container img {
+    max-width: 100%;
+    height: auto;
+    display: inline-block;
+  }
+
+  :not(.twikoo-container) img {
+    max-width: none !important;
+    height: auto !important;
+  }
+
   .twikoo-container {
     font-family: inherit;
   }
@@ -157,16 +158,12 @@ const { envId, path } = Astro.props
     color: rgb(161 161 170) !important;
   }
 
-  .tk-avatar {
-    display: none !important;
+  .twikoo .tk-avatar {
+    @apply w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full overflow-hidden;
   }
 
-  .tk-content {
-    margin-left: 0 !important;
-  }
-
-  .tk-main {
-    margin-left: 0 !important;
+  .twikoo .tk-avatar img {
+    @apply w-full h-full object-cover block;
   }
 </style>
 ```
@@ -187,8 +184,8 @@ export async function getStaticPaths() {
     props: post,
   }));
 }
-
 type Props = CollectionEntry<"posts">;
+
 const post = Astro.props;
 const { Content } = await post.render();
 ---
@@ -205,19 +202,107 @@ const { Content } = await post.render();
     <p class="mb-1 font-medium text-zinc-500">
       {formatDate(post.data.date)}
     </p>
-
-    <article class="prose dark:prose-invert">
+    <article>
       <Content />
     </article>
-
-    <div class="mt-10">
-      <TwikooComments 
-        envId="https://twikoo.284628.xyz/.netlify/functions/twikoo"
-        path={`/posts/${post.slug}`}
-      />
-    </div>
+    
+    <!-- 评论区 -->
+    <TwikooComments 
+      envId="your-twikoo-env-id" 
+      path={`/posts/${post.slug}`}
+    />
   </main>
 </Layout>
 ```
 
-最后将代码中的 `"your-twikoo-env-id"` 替换为实际环境 ID。
+最后将代码中的 `"your-twikoo-env-id"` 替换为实际环境 ID，就可以在博客中使用 Twikoo 评论系统了。
+
+既然评论区已经配置完成，那么友情链接页面也没必要再保留“通过邮件联系”的提示。相比发邮件，直接在页面下方留言会更方便。所以我打算把友情链接页面的那一段提示替换成评论区，让访客可以直接在页面留言交换友链。
+
+```
+---
+import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
+import Layout from "../layouts/Layout.astro";
+import TwikooComments from "../components/TwikooComments.astro";
+
+// 友情链接数据
+const friends = [
+  {
+    name: "示例博客",
+    url: "https://example.com",
+    description: "一个很棒的技术博客",
+    avatar: "https://via.placeholder.com/32"
+  },
+  {
+    name: "朋友的站点",
+    url: "https://friend.com",
+    description: "分享生活和思考",
+    avatar: "https://via.placeholder.com/32"
+  },
+  {
+    name: "技术分享",
+    url: "https://tech-share.com",
+    description: "前端开发经验分享",
+    avatar: "https://via.placeholder.com/32"
+  }
+];
+
+// Twikoo 环境 ID，需要替换成你的实际 ID
+const TWIKOO_ENV_ID = "your-twikoo-env-id";
+---
+
+<Layout title={`友情链接 - ${SITE_TITLE}`} description={SITE_DESCRIPTION}>
+  <main>
+    <h1 class="mb-5 text-xl font-medium">友情链接</h1>
+    
+    <div class="mb-6">
+      <p class="text-zinc-500 dark:text-zinc-400 leading-relaxed">
+        这里是我的朋友们的站点，每一个都值得一看。
+      </p>
+    </div>
+
+    <div class="space-y-3">
+      {friends.map((friend) => (
+        <a 
+          href={friend.url} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          class="group flex items-center gap-3 p-3 rounded-lg border transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-800"
+        >
+          <img 
+            src={friend.avatar} 
+            alt={friend.name}
+            class="size-8 rounded-full border dark:border-zinc-700"
+          />
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between gap-2">
+              <h3 class="font-medium text-zinc-900 dark:text-zinc-100 group-hover:text-blue-500 dark:group-hover:text-blue-400">
+                {friend.name}
+              </h3>
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                viewBox="0 0 16 16" 
+                fill="currentColor" 
+                class="size-4 text-zinc-400 group-hover:text-zinc-600 dark:group-hover:text-zinc-300"
+              >
+                <path fill-rule="evenodd" d="M4.22 11.78a.75.75 0 0 1 0-1.06L9.44 5.5H5.75a.75.75 0 0 1 0-1.5h5.5a.75.75 0 0 1 .75.75v5.5a.75.75 0 0 1-1.5 0V6.56l-5.22 5.22a.75.75 0 0 1-1.06 0Z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <p class="text-sm text-zinc-500 dark:text-zinc-400 truncate">
+              {friend.description}
+            </p>
+          </div>
+        </a>
+      ))}
+    </div>
+
+    <!-- 友情链接页面评论区 -->
+    <TwikooComments 
+      envId={TWIKOO_ENV_ID} 
+      path="/friends"
+    />
+  </main>
+</Layout>
+```
+
+同样将代码中的 `"your-twikoo-env-id"` 替换为实际环境 ID。
