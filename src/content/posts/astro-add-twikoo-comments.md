@@ -20,10 +20,9 @@ const { envId, path } = Astro.props;
 
 <div class="mt-8">
   <h2 class="mb-4 text-lg font-medium text-zinc-900 dark:text-zinc-100">评论</h2>
-  <div id="tcomment-loading" class="hidden"></div>
   <div 
     id="tcomment" 
-    class="twikoo-container rounded-lg border p-4 dark:border-zinc-700 hidden opacity-0 transition-opacity duration-300"
+    class="twikoo-container rounded-lg border p-4 dark:border-zinc-700"
   ></div>
 </div>
 
@@ -39,16 +38,7 @@ const { envId, path } = Astro.props;
         envId: envId,
         el: '#tcomment',
         path: path || location.pathname,
-        lang: 'zh-CN',
-        onCommentLoaded: () => {
-          const comment = document.getElementById('tcomment');
-          const loading = document.getElementById('tcomment-loading');
-          loading.classList.add('hidden');
-          comment.classList.remove('hidden');
-          requestAnimationFrame(() => {
-            comment.classList.add('opacity-100');
-          });
-        }
+        lang: 'zh-CN'
       });
     }
   };
@@ -63,85 +53,74 @@ const { envId, path } = Astro.props;
 </script>
 
 <style is:global>
-  .twikoo-container img {
-    max-width: 100%;
-    height: auto;
-    display: inline-block;
-  }
-
-  :not(.twikoo-container) img {
-    max-width: none !important;
-    height: auto !important;
-  }
-
   .twikoo-container {
     font-family: inherit;
   }
-
+  
   .dark .twikoo-container {
     background-color: transparent;
   }
-
+  
   .dark .tk-content textarea,
   .dark .tk-input input {
     background-color: rgb(39 39 42) !important;
     border-color: rgb(63 63 70) !important;
     color: rgb(228 228 231) !important;
   }
-
+  
   .dark .tk-content textarea:focus,
   .dark .tk-input input:focus {
     border-color: rgb(96 165 250) !important;
   }
-
+  
   .dark .tk-submit {
     background-color: rgb(24 24 27) !important;
     border-color: rgb(63 63 70) !important;
     color: rgb(228 228 231) !important;
   }
-
+  
   .dark .tk-submit:hover {
     background-color: rgb(39 39 42) !important;
   }
-
+  
   .dark .tk-comment,
   .dark .tk-replies-wrap {
     background-color: transparent !important;
     border-color: rgb(63 63 70) !important;
   }
-
+  
   .dark .tk-comment .tk-main {
     color: rgb(228 228 231) !important;
   }
-
+  
   .dark .tk-comment .tk-meta span {
     color: rgb(161 161 170) !important;
   }
-
+  
   .dark .tk-comment a {
     color: rgb(96 165 250) !important;
   }
-
+  
   .dark .tk-comment a:hover {
     color: rgb(147 197 253) !important;
   }
-
+  
   .dark .tk-owo-container {
     background-color: rgb(39 39 42) !important;
     border-color: rgb(63 63 70) !important;
   }
-
+  
   .dark .tk-tag,
   .dark .tk-extras {
     color: rgb(161 161 170) !important;
   }
-
+  
   .tk-comment,
   .tk-content,
   .tk-input {
     font-family: 'Geist', system-ui, sans-serif !important;
   }
-
+  
   .tk-content textarea,
   .tk-input input,
   .tk-submit,
@@ -149,21 +128,13 @@ const { envId, path } = Astro.props;
   .tk-owo-container {
     border-radius: 0.5rem !important;
   }
-
+  
   .tk-comment {
     margin-bottom: 1rem !important;
   }
-
+  
   .dark .tk-loading {
     color: rgb(161 161 170) !important;
-  }
-
-  .twikoo .tk-avatar {
-    @apply w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full overflow-hidden;
-  }
-
-  .twikoo .tk-avatar img {
-    @apply w-full h-full object-cover block;
   }
 </style>
 ```
