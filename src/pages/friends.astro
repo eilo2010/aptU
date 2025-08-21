@@ -162,9 +162,6 @@ const friends = [
     avatar: "https://i.284628.xyz/zETGMDmU.webp"
   }
 ];
-
-// Twikoo 环境 ID，需要替换成你的实际 ID
-const TWIKOO_ENV_ID = "https://twikoo.284628.xyz/.netlify/functions/twikoo";
 ---
 
 <Layout title={`友情链接 - ${SITE_TITLE}`} description={SITE_DESCRIPTION}>
@@ -212,10 +209,15 @@ const TWIKOO_ENV_ID = "https://twikoo.284628.xyz/.netlify/functions/twikoo";
       ))}
     </div>
 
-    <!-- 友情链接页面评论区 -->
-    <TwikooComments 
-      envId={TWIKOO_ENV_ID} 
-      path="/friends"
-    />
+    <div class="mt-8 p-4 rounded-lg border bg-zinc-50/50 dark:border-zinc-700 dark:bg-zinc-800/50">
+      <h2 class="font-medium text-zinc-900 dark:text-zinc-100 mb-2">交换友链</h2>
+      <p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">
+        如果你也有博客，欢迎与我交换友情链接。可以通过 
+        <a href="mailto:hello@nicholasly.com" class="text-blue-500 underline hover:text-blue-600 dark:hover:text-blue-400">
+          邮件
+        </a> 
+        联系我。
+      </p>
+    </div>
   </main>
 </Layout>
