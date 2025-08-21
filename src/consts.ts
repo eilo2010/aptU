@@ -5,4 +5,4 @@ export const SITE_URL = "https://aptu.net";
 export const SITE_TITLE = "aptU";
 export const SITE_DESCRIPTION = "Welcome to my website!";
 
-export const EMAIL = "hello@nicholasly.com";
+export const EMAIL = "8361207@gmail.com";
