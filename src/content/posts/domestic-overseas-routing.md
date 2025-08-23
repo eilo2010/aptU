@@ -1,6 +1,6 @@
 ---
 title: "网站国内外分流"
-description: "腾讯云 EdgeOne 推出的免费 CDN 套餐，支持不限量加速流量与请求，功能涵盖缓存、优化、安全防护等核心场景。本文将带你了解免费版的优势与限制，并结合实际使用过程，分享在控制台中的配置步骤与推荐选项，帮助个人项目和中小型网站快速上手并获得稳定高效的加速体验。"
+description: "在服务器上通过 1Panel 搭建环境，结合 Cloudflare 与国内 CDN，实现主域名和辅助域名的分流解析。境内访问可走国内 CDN 提升速度，境外访问则通过 Cloudflare 回源，既能保证稳定高效，又能兼顾安全与灵活性。"
 date: "Apr 16 2025"
 ---
 最近我一直在尝试优化网站的访问速度。通过境外 [Cloudflare CDN](https://www.cloudflare.com/zh-cn/application-services/products/cdn) 分流，网站的全球平均打开时间从 2.7s 降到了 1s 左右。
