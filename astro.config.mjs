@@ -1,22 +1,33 @@
-// @ts-check
-import { defineConfig } from "astro/config";
-import mdx from "@astrojs/mdx";
+import { defineConfig } from 'astro/config';
+import tailwind from '@astrojs/tailwind';
+import sitemap from '@astrojs/sitemap';
+import critters from 'astro-critters';
 
-import sitemap from "@astrojs/sitemap";
-
-import tailwind from "@astrojs/tailwind";
-import { SITE_URL } from "./src/consts";
-
-// https://astro.build/config
 export default defineConfig({
-  site: SITE_URL,
-  integrations: [mdx(), sitemap(), tailwind()],
-  markdown: {
-    shikiConfig: {
-      themes: {
-        light: "catppuccin-latte",
-        dark: "catppuccin-mocha",
-      },
-    },
-  },
+  site: 'https://aptu.net',
+  integrations: [
+    tailwind(),
+    sitemap(),
+    critters({
+      preload: 'media',
+      inlineFonts: true,
+      pruneSource: true,
+      mergeStylesheets: true,
+    })
+  ],
+  vite: {
+    build: {
+      cssCodeSplit: false,
+      rollupOptions: {
+        output: {
+          assetFileNames: (assetInfo) => {
+            if (assetInfo.name && assetInfo.name.endsWith('.css')) {
+              return 'assets/style.[hash].css';
+            }
+            return 'assets/[name].[hash][extname]';
+          }
+        }
+      }
+    }
+  }
 });
