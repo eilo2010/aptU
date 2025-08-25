@@ -15,14 +15,30 @@ date: "Apr 16 2025"
 
 ![1Panel](https://i.284628.xyz/kylszJUe.webp)
 
-然后准备两个域名：主域名用于最终对外访问，必须托管在支持 DNS 分流的服务商（如[阿里云](https://wanwang.aliyun.com/domain/dns)、[腾讯云](https://cloud.tencent.com/product/dns)、[华为云](https://www.huaweicloud.com/product/dns.html) DNS），如果现有域名不支持，可以通过子域名的 NS 记录指向这些厂商来实现；辅助域名绑定在 Cloudflare 并开启 Cloudflare CDN 在 1Panel 中配置，作为源站使用。
+然后准备两个域名：主域名用于最终对外访问，必须托管在支持 DNS 分流的服务商（如[阿里云](https://wanwang.aliyun.com/domain/dns)、[腾讯云](https://cloud.tencent.com/product/dns)、[华为云](https://www.huaweicloud.com/product/dns.html) DNS），如果现有域名不支持，可以通过子域名的 NS 记录指向这些厂商来实现。
+
+![](https://i.284628.xyz/E9JLxU3g.webp)
+
+辅助域名绑定在 Cloudflare 并开启 Cloudflare CDN 在 1Panel 中配置，作为源站使用。
+
+![辅助域名](https://i.284628.xyz/G6TgHSi1.webp)
 
 最后需要一个 Cloudflare 账号用于设置自定义主机名，同时选择一家国内访问速度较好的 CDN 厂商，将主域名接入以完成国内加速，从而实现境内外分流访问。
 
-首先需要在 1Panel 搭建网站，绑定辅助域名，比如 `source.example.com`，然后通过 1Panel 自带的 [Let’s Encrypt](https://letsencrypt.org) 功能申请 SSL 证书，确保站点可以正常访问 `HTTPS`。
+首先需要在 1Panel 搭建网站，绑定辅助域名，比如 `source.辅助域名.com`，然后通过 1Panel 自带的 [Let’s Encrypt](https://letsencrypt.org) 功能申请 SSL 证书，确保站点可以正常访问 `HTTPS`。
 
-接下来打开 Cloudflare 的自定义主机名，新增一个回退源，填写刚才在 1Panel 搭建的辅助域名。然后添加一个自定义主机名，使用主域名的子域名，比如 `www.example.com`，验证方式选择 `TXT`，在 DNS 服务商添加对应的 TXT 记录，Cloudflare 验证成功后，主域名就可以通过 Cloudflare 反向代理到源站了。
+![1Panel网站](https://i.284628.xyz/DvDAKcov.webp)
 
-之后在国内 CDN 厂商添加主域名加速，源站设置填写 1Panel 绑定的辅助域名，例如 `source.example.com`，端口 `443`，协议 `HTTPS`，并将 Host 设置为源站域名以保证回源正确。CDN 会分配一个 `CNAME` 地址，然后在主域名的 DNS 管理后台设置线路：默认线路或境内线路指向国内 CDN 地址，境外线路指向辅助域名。
+接下来打开 Cloudflare 的自定义主机名，新增一个回退源，填写刚才在 1Panel 搭建的辅助域名。
+
+![回退源](https://i.284628.xyz/hkzjvAT6.webp)
+
+然后添加一个自定义主机名，使用主域名或主域名的子域名，比如 `主域名.com` 或 `www.主域名.com`，验证方式选择 `TXT`，在 DNS 服务商添加对应的 TXT 记录，Cloudflare 验证成功后，主域名就可以通过 Cloudflare 反向代理到源站了。
+
+![](https://i.284628.xyz/GARpG7jQ.webp)
+
+![](https://i.284628.xyz/lw3HSeO1.webp)
+
+之后在国内 CDN 厂商添加主域名加速，源站设置填写 1Panel 绑定的辅助域名，例如 `source.辅助域名.com`，端口 `443`，协议 `HTTPS`，并将 Host 设置为源站域名以保证回源正确。CDN 会分配一个 `CNAME` 地址，然后在主域名的 DNS 管理后台设置线路：默认线路或境内线路指向国内 CDN 地址，境外线路指向辅助域名。
 
 最后在国内 CDN 控制台申请 SSL 证书，确保主域名在国内 CDN 和 Cloudflare 都支持 `HTTPS`，然后用网站测速工具测试访问效果，国内节点访问走国内 CDN，国外节点访问走 Cloudflare 回源。这样就完成了国内外分流访问的配置，既保证国内访问速度，又能让国外访问顺畅安全。

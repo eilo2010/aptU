@@ -7,6 +7,9 @@ interface Props {
 const { envId, path } = Astro.props;
 ---
 
+<link rel="preconnect" href="https://twikoo.284628.xyz" />
+<link rel="preconnect" href="https://cdn.jsdelivr.net" />
+
 <div class="mt-8">
   <h2 class="mb-4 text-lg font-medium text-zinc-900 dark:text-zinc-100">评论</h2>
   <div 
@@ -22,118 +25,177 @@ const { envId, path } = Astro.props;
   </div>
 </div>
 
-<!-- 使用 defer 属性延迟执行，确保 DOM 就绪 -->
-<script 
-  src="https://cdn.jsdelivr.net/npm/twikoo@1.6.32/dist/twikoo.all.min.js"
-  defer
-></script>
-
-<!-- 内联脚本处理初始化 -->
 <script is:inline>
-  // 全局变量存储重试次数
-  window.twikooRetryCount = 0;
-  window.maxRetries = 20; // 最大重试次数
-
-  function waitForTwikoo(callback, retryCount = 0) {
-    if (typeof window.twikoo !== 'undefined') {
-      callback();
-    } else if (retryCount < window.maxRetries) {
-      setTimeout(() => waitForTwikoo(callback, retryCount + 1), 200);
-    } else {
-      console.error('Twikoo failed to load after maximum retries');
-      showErrorMessage();
+  class TwikooLoader {
+    constructor() {
+      this.loaded = false;
+      this.retryCount = 0;
+      this.maxRetries = 10;
+      this.retryDelay = 300;
+      this.setupObserver();
     }
-  }
 
-  function showErrorMessage() {
-    const containers = document.querySelectorAll('#tcomment');
-    containers.forEach(container => {
+    setupObserver() {
+      const container = document.getElementById('tcomment');
+      if (!container) return;
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && !this.loaded) {
+            this.loadTwikoo();
+            observer.disconnect();
+          }
+        });
+      }, {
+        rootMargin: '100px'
+      });
+
+      observer.observe(container);
+    }
+
+    async loadTwikoo() {
+      if (this.loaded) return;
+      
+      try {
+        await this.loadScript('https://cdn.jsdelivr.net/npm/twikoo@1.6.32/dist/twikoo.all.min.js');
+        this.loaded = true;
+        await this.initTwikoo();
+      } catch (error) {
+        console.warn('Twikoo 加载失败，准备重试:', error);
+        this.handleLoadError();
+      }
+    }
+
+    loadScript(src) {
+      return new Promise((resolve, reject) => {
+        if (document.querySelector(`script[src="${src}"]`)) {
+          resolve();
+          return;
+        }
+
+        const script = document.createElement('script');
+        script.src = src;
+        script.defer = true;
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+      });
+    }
+
+    async initTwikoo() {
+      const container = document.getElementById('tcomment');
+      if (!container) {
+        console.warn('Twikoo 容器未找到');
+        return;
+      }
+
+      const envId = container.getAttribute('data-env-id');
+      const path = container.getAttribute('data-path');
+      
+      if (!envId) {
+        this.showError('评论系统配置错误：缺少环境ID');
+        return;
+      }
+
+      await this.waitForTwikoo();
+
+      try {
+        container.innerHTML = '';
+        
+        await window.twikoo.init({
+          envId: envId,
+          el: '#tcomment',
+          path: path === 'auto' ? location.pathname : path,
+          lang: 'zh-CN'
+        });
+        
+        console.log('Twikoo 初始化成功');
+      } catch (error) {
+        console.error('Twikoo 初始化失败:', error);
+        this.showError(`评论系统初始化失败：${error.message}`);
+      }
+    }
+
+    waitForTwikoo() {
+      return new Promise((resolve, reject) => {
+        const checkTwikoo = () => {
+          if (typeof window.twikoo !== 'undefined') {
+            resolve();
+          } else if (this.retryCount < this.maxRetries) {
+            this.retryCount++;
+            setTimeout(checkTwikoo, this.retryDelay);
+          } else {
+            reject(new Error('Twikoo 脚本加载超时'));
+          }
+        };
+        checkTwikoo();
+      });
+    }
+
+    handleLoadError() {
+      if (this.retryCount < this.maxRetries) {
+        setTimeout(() => {
+          this.retryCount++;
+          this.loadTwikoo();
+        }, this.retryDelay * this.retryCount);
+      } else {
+        this.showError('评论系统加载失败，请刷新页面重试');
+      }
+    }
+
+    showError(message) {
+      const container = document.getElementById('tcomment');
       if (container) {
         container.innerHTML = `
-          <div class="text-center py-8 text-red-500">
-            <p>评论系统加载失败</p>
-            <button onclick="location.reload()" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm">
+          <div class="text-center py-8 text-red-500 dark:text-red-400">
+            <svg class="mx-auto mb-2 h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <p class="mb-2">${message}</p>
+            <button 
+              onclick="location.reload()" 
+              class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md text-sm transition-colors"
+            >
               重新加载
             </button>
           </div>
         `;
       }
-    });
-  }
-
-  function initializeTwikoo() {
-    const container = document.getElementById('tcomment');
-    
-    if (!container) {
-      console.warn('Twikoo container (#tcomment) not found');
-      return;
     }
 
-    const envId = container.getAttribute('data-env-id');
-    const path = container.getAttribute('data-path');
-    
-    if (!envId) {
-      console.error('Twikoo envId not provided');
-      container.innerHTML = '<div class="text-center py-8 text-red-500">评论系统配置错误</div>';
-      return;
-    }
-
-    try {
-      // 清理容器
-      container.innerHTML = '';
-      
-      // 初始化 Twikoo
-      window.twikoo.init({
-        envId: envId,
-        el: '#tcomment',
-        path: path === 'auto' ? location.pathname : path,
-        lang: 'zh-CN'
-      });
-      
-      console.log('Twikoo initialized successfully');
-    } catch (error) {
-      console.error('Failed to initialize Twikoo:', error);
-      container.innerHTML = `
-        <div class="text-center py-8 text-red-500">
-          <p>评论系统初始化失败</p>
-          <p class="text-sm mt-1">${error.message}</p>
-          <button onclick="location.reload()" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm">
-            重新加载
-          </button>
-        </div>
-      `;
+    reinit() {
+      this.loaded = false;
+      this.retryCount = 0;
+      this.setupObserver();
     }
   }
 
-  function handlePageInit() {
-    // 重置重试计数
-    window.twikooRetryCount = 0;
-    
-    // 等待 Twikoo 脚本加载完成后初始化
-    waitForTwikoo(initializeTwikoo);
+  let twikooLoader;
+
+  function initTwikooLoader() {
+    twikooLoader = new TwikooLoader();
   }
 
-  // 首次加载处理
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', handlePageInit);
+    document.addEventListener('DOMContentLoaded', initTwikooLoader);
   } else {
-    // DOM 已经准备就绪，延迟一点执行以确保所有脚本都加载完成
-    setTimeout(handlePageInit, 100);
+    initTwikooLoader();
   }
 
-  // Astro ViewTransitions 支持
   document.addEventListener('astro:after-swap', () => {
-    console.log('Page swapped, reinitializing Twikoo');
-    setTimeout(handlePageInit, 150);
+    console.log('页面切换，重新初始化 Twikoo');
+    if (twikooLoader) {
+      twikooLoader.reinit();
+    } else {
+      setTimeout(initTwikooLoader, 100);
+    }
   });
 
-  // 页面可见性变化处理（可选）
   document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) {
+    if (!document.hidden && twikooLoader && !twikooLoader.loaded) {
       const container = document.getElementById('tcomment');
       if (container && container.children.length === 0) {
-        console.log('Page became visible, checking Twikoo');
-        setTimeout(handlePageInit, 100);
+        twikooLoader.loadTwikoo();
       }
     }
   });
@@ -143,13 +205,13 @@ const { envId, path } = Astro.props;
   .twikoo-container {
     font-family: inherit;
     min-height: 200px;
+    contain: layout style paint;
   }
   
   .dark .twikoo-container {
     background-color: transparent;
   }
   
-  /* 输入框样式 */
   .dark .tk-content textarea,
   .dark .tk-input input {
     background-color: rgb(39 39 42) !important;
@@ -162,7 +224,6 @@ const { envId, path } = Astro.props;
     border-color: rgb(96 165 250) !important;
   }
   
-  /* 按钮样式 */
   .dark .tk-submit {
     background-color: rgb(24 24 27) !important;
     border-color: rgb(63 63 70) !important;
@@ -173,7 +234,6 @@ const { envId, path } = Astro.props;
     background-color: rgb(39 39 42) !important;
   }
   
-  /* 评论区域样式 */
   .dark .tk-comment,
   .dark .tk-replies-wrap {
     background-color: transparent !important;
@@ -188,7 +248,6 @@ const { envId, path } = Astro.props;
     color: rgb(161 161 170) !important;
   }
   
-  /* 链接样式 */
   .dark .tk-comment a {
     color: rgb(96 165 250) !important;
   }
@@ -197,19 +256,16 @@ const { envId, path } = Astro.props;
     color: rgb(147 197 253) !important;
   }
   
-  /* 表情包容器 */
   .dark .tk-owo-container {
     background-color: rgb(39 39 42) !important;
     border-color: rgb(63 63 70) !important;
   }
   
-  /* 标签和额外信息 */
   .dark .tk-tag,
   .dark .tk-extras {
     color: rgb(161 161 170) !important;
   }
   
-  /* 字体和边框圆角 */
   .tk-comment,
   .tk-content,
   .tk-input {
@@ -228,18 +284,22 @@ const { envId, path } = Astro.props;
     margin-bottom: 1rem !important;
   }
   
-  /* 加载状态 */
   .dark .tk-loading {
     color: rgb(161 161 170) !important;
   }
   
-  /* 加载动画 */
   .animate-spin {
     animation: spin 1s linear infinite;
+    will-change: transform;
   }
   
   @keyframes spin {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
+  }
+  
+  .tk-comment .tk-avatar img {
+    loading: lazy;
+    decoding: async;
   }
 </style>
