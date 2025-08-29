@@ -1,6 +1,6 @@
 ---
 title: "1Panel 安装雷池 WAF"
-description: ""
+description: "我在服务器上使用 1Panel 安装了雷池 WAF，提升了 Web 应用的安全性。通过简洁的一键脚本安装，配置 OpenResty 端口避免冲突，最终成功部署了防护。雷池 WAF 能有效阻挡 SQL 注入等攻击，配置过程简单，几步就能完成。本文分享了安装过程、配置技巧及防护效果，适合有一定技术基础的用户参考，帮助加固服务器安全。"
 date: "Aug 24 2025"
 ---
 我最近想在服务器上加个WAF防护，就试了试[雷池](https://waf-ce.chaitin.cn)，听说它非常强大。我的服务器管理工具是 [1Panel](https://1panel.cn) 。
