@@ -1,0 +1,19 @@
+---
+import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout
+  title={SITE_TITLE}
+  description={SITE_DESCRIPTION}
+  className="flex h-svh max-w-sm flex-col justify-center"
+>
+  <main class="space-y-4">
+    <p>
+      I am from China, 15 years old, and currently a middle school student. I enjoy technology and website development. Here, I share my projects, study notes, development documentation, and daily life.
+    </p>
+    <p>
+      I am also a <a href="https://space.bilibili.com/3546683107445049" target="_blank" class="text-blue-500 underline">Bilibili content creator</a> and maintain my <a href="https://github.com/eilo2010" target="_blank" class="text-blue-500 underline">GitHub repository</a>, where I document my projects and code.
+    </p>
+  </main>
+</Layout>
