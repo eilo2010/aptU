@@ -5,7 +5,7 @@ date: "Aug 20 2025"
 ---
 在前面的文章里，我先是把博客从 Hexo 迁移到了 Astro，然后又手搓了一个友情链接页面，让整体风格更加完整。接下来要实现的功能就是评论区了。
 
-对于一个博客来说，评论区不仅能让访客表达想法，也能增加互动感。我的 Hexo 博客一直用的就是 [Twikoo](https://twikoo.js.org)，功能已经配置的比较完善，所以迁移到 Astro 后也自然想继续用它。其实我也考虑过接入 [Giscus](https://giscus.app)，但想了想，它依赖 GitHub Issues，而且限制相对较大，不如 Twikoo 来得灵活。最后，我还是决定让 Twikoo 成为新博客的评论系统。
+对于一个博客来说，评论区不仅能让访客表达想法，也能增加互动感。我的 Hexo 博客一直用的就是 [Twikoo](https://twikoo.js.org)，功能已经配置的比较完善，所以迁移到 Astro 后也自然想继续用它。
 
 首先我需要创建评论组件，将下面代码保存为 `src/components/TwikooComments.astro`:
 ```

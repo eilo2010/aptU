@@ -30,7 +30,7 @@ pathname
 例如文章路径为：
 
 ```
-posts/astro-add-giscus-comments
+/posts/astro-add-giscus-comments
 ```
 
 那么只要保证这个路径不变，评论和页面就会始终匹配。
