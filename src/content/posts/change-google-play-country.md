@@ -3,13 +3,13 @@ title: "修改 Google Play 关联国家"
 description: "Google Play 的关联国家由付款方式的账单地址决定，添加美国信用卡信息并填写美国账单地址即可切换至美区账号。切换成功后即可在 Google Play 解锁更多应用下载权限，满足海外 AI 工具等使用需求。"
 date: "Apr 02 2025"
 ---
-这两天我发现我的 [Google play](https://play.google.com) 的关联国家无法满足海外 AI 工具的需求，比如想下载 [Gemini](https://claude.ai)，结果发现港区竟然搜不到，那只能想办法更改国家/地区为美区。
+这两天我发现我的 [Google play](https://play.google.com) 的关联国家无法满足海外 AI 工具的需求，比如想下载 [Gemini](https://claude.ai)，结果发现港区竟然搜不到，那只能想[办法](https://support.google.com/googleplay/answer/7431675?hl=zh-Hans)更改国家/地区为美区。
 
 Google play 的关联国家是通过添加付款方式时选择的账单地址国家来确定的。也就是说，只要账单地址填美国，你的 Google Play 就是美区账号。
 
 没有付款方式时，Google Play 是看你的 IP 来推荐应用的，但账号国家并没有锁定。一旦绑定信用卡并添加美国账单地址，账号就固定成美区。
 
-登录 Google 账号，点击:
+全局使用美国 IP，登录 Google 账号，点击:
 
 ```
 管理您的 Google 账号
