@@ -94,6 +94,3 @@ Oregon
 显示 `美国`，那就说明改成功了。
 
 ![](https://i.284628.xyz/RCtw0IIm.webp)
-
-<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-<div class="cf-turnstile" data-sitekey="0x4AAAAAAB1FZgGQgOGINZ3w"></div>
