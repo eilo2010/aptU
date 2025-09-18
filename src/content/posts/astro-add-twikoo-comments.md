@@ -8,7 +8,8 @@ date: "Aug 20 2025"
 对于一个博客来说，评论区不仅能让访客表达想法，也能增加互动感。我的 Hexo 博客一直用的就是 [Twikoo](https://twikoo.js.org)，功能已经配置的比较完善，所以迁移到 Astro 后也自然想继续用它。
 
 首先我需要创建评论组件，将下面代码保存为 `src/components/TwikooComments.astro`:
-```
+
+```astro
 ---
 interface Props {
   envId: string;
@@ -258,7 +259,7 @@ const { envId, path } = Astro.props;
 
 再将下面代码替换你现有的 `src/pages/posts/[...slug].astro`:
 
-```
+```astro
 ---
 import { type CollectionEntry, getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";

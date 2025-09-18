@@ -65,7 +65,7 @@ Announcements
 
 以我的主题为例，可以将下面的代码替换掉现有的 `src/pages/posts/[...slug].astro`：
 
-```
+```astro
 ---
 import { type CollectionEntry, getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
