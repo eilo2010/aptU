@@ -67,6 +67,15 @@ const {
     <meta property="twitter:description" content={description} />
     <meta property="twitter:image" content={new URL(image, Astro.url)} />
 
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-G8TCELYX6P"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-G8TCELYX6P');
+    </script>
+
     <ViewTransitions />
   </head>
   <body
@@ -109,3 +118,4 @@ const {
 
   document.addEventListener("astro:after-swap", setTheme);
 </script>
+</html>
