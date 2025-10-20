@@ -1,9 +1,9 @@
 ---
 title: "DeepL API 接口申请教程"
-description: "使用 Cloudflare Workers 搭建 Bing 每日一图 API，零服务器成本，自动获取并跳转到今日必应高清壁纸，简单快捷，永久免费。支持绑定自定义域名，适合个人网站、博客背景或壁纸工具接入，全球加速访问快速稳定。"
+description: "注册 DeepL 账号后，进入 Products → DeepL API → Sign up for free，填写账单与银行卡信息完成验证后即可创建 API Key。免费套餐每月可翻译 50 万字符，系统自动续期，无需手动操作，适合个人或小型项目使用，简单高效、稳定可靠。"
 date: "Nov 20 2024"
 ---
-首先打开 DeepL 官网，点击:
+首先打开 [DeepL](https://www.deepl.com) 官网，点击:
 
 ```
 Log in
